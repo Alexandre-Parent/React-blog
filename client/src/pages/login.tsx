@@ -2,9 +2,9 @@ import React, { useContext, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Button, Card, CardBody, CardHeader } from 'reactstrap'
 import ErrorText from '../components/ErrorText'
-import { GoogleAuthProvider } from 'firebase/auth' // Correct Firebase import
+import { GoogleAuthProvider } from 'firebase/auth'
 import logging from '../config/logging'
-import { SignInSocialMedia as SocialMediaPopup } from '../modules/auth'
+import { Authenticate, SignInSocialMedia as SocialMediaPopup } from '../modules/auth'
 import CenterPiece from '../components/CenterPiece'
 import LoadingComponent from '../components/LoadingComponent'
 import UserContext from '../contextes/user'
@@ -17,8 +17,15 @@ const LoginPage: React.FC = () => {
     const navigate = useNavigate() // Use useNavigate instead of useHistory
     const isLogin = window.location.pathname.includes('login')
 
+    // Gestion des erreurs centralisée
+    const handleError = (message: string) => {
+        setError(message)
+        setAuthenticating(false)
+    }
+
+    // Fonction pour gérer la connexion via Google
     const SignInSocialMedia = async (provider: GoogleAuthProvider) => {
-        if (error !== '') setError('')
+        if (error) setError('')
 
         setAuthenticating(true)
 
@@ -35,24 +42,38 @@ const LoginPage: React.FC = () => {
                 if (name) {
                     try {
                         const fire_token = await user.getIdToken()
-
-                        /* Validate with backend or perform any action needed with the token */
+                        
+                        // Utiliser une fonction async ici pour gérer l'authentification
+                        await handleAuthentication(uid, name, fire_token)
                     } catch (error) {
-                        setError('Invalid Token')
+                        handleError('Invalid Token')
                         logging.error(error)
-                        setAuthenticating(false)
                     }
                 } else {
-                    setError('Missing name')
-                    setAuthenticating(false)
+                    handleError('Missing name')
                 }
             } else {
-                setError('The social media provider does not have enough information. Please try a different provider.')
-                setAuthenticating(false)
+                handleError('The social media provider does not have enough information. Please try a different provider.')
             }
         } catch (error: any) {
-            setError(error.message)
-            setAuthenticating(false)
+            handleError(error.message)
+        }
+    }
+
+    // Fonction séparée pour gérer l'authentification
+    const handleAuthentication = async (uid: string, name: string, fire_token: string) => {
+        try {
+            Authenticate(uid, name, fire_token, (error, _user) => {
+                if (error) {
+                    handleError(error)
+                } else if (_user) {
+                    userContext.userDispatch({ type: 'login', payload: { user: _user, fire_token } })
+                    navigate('/')  // Utilisation de navigate à la place de history.push
+                }
+            })
+        } catch (error) {
+            handleError('Unable to authenticate')
+            logging.error(error)
         }
     }
 
@@ -70,9 +91,17 @@ const LoginPage: React.FC = () => {
                         onClick={() => SignInSocialMedia(new GoogleAuthProvider())}
                         style={{ backgroundColor: '#ea4335', borderColor: '#ea4335' }}
                     >
-                        <i className="fab fa-google mr-2"></i> Sign {isLogin ? 'in' : 'up'} with Google
+                        {authenticating ? (
+                            <>
+                                <LoadingComponent card={false} />
+                                Authenticating...
+                            </>
+                        ) : (
+                            <>
+                                <i className="fab fa-google mr-2"></i> Sign {isLogin ? 'in' : 'up'} with Google
+                            </>
+                        )}
                     </Button>
-                    {authenticating && <LoadingComponent card={false} />}
                 </CardBody>
             </Card>
         </CenterPiece>

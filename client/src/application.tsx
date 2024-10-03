@@ -4,6 +4,8 @@ import { useEffect, useReducer, useState } from 'react';
 import { initialUserState, userReducer, UserContextProvider } from './contextes/user';
 import LoadingComponent from './components/LoadingComponent';
 import AuthRoute from './components/AuthRoute';
+import { Validate } from './modules/auth';
+import logging from './config/logging';
 
 export interface IApplicationsProps {}
 
@@ -24,8 +26,7 @@ const Application: React.FunctionComponent<IApplicationsProps> = () => {
     const CheckLocalStorageForDatas = () => {
         setAuthStage('Checking credentials ...');
 
-        const fire_token = localStorage.getItem('fire_token');
-
+        const fire_token = localStorage.getItem('firetoken');
         if (fire_token === null) {
             userDispatch({ type: 'logout', payload: initialUserState });
             setAuthStage('No credentials found');
@@ -33,11 +34,23 @@ const Application: React.FunctionComponent<IApplicationsProps> = () => {
                 setLoading(false);
             }, 1000);
         } else {
-            /* validate with backend */
-            setAuthStage('Credentials found');
-            setTimeout(() => {
-                setLoading(false);
-            }, 1000);
+            return Validate(fire_token, (error, user)=>{
+                if(error){
+                    logging.error(error)
+                    setAuthStage("User not valid ")
+                    userDispatch({ type: 'logout', payload: initialUserState })
+                    setTimeout(() => {
+                        setLoading(false);
+                    }, 1000);
+                }
+                else if (user){
+                    setAuthStage("User connected ")
+                    userDispatch({ type: 'login', payload: {user, fire_token} })
+                    setTimeout(() => {
+                        setLoading(false);
+                    }, 1000);
+                }
+            })
         }
     };
 
