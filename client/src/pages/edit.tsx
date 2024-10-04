@@ -1,4 +1,4 @@
-import IpageProps from "../interfaces/pages";
+import IpageProps from "../interfaces/pageInterface";
 
 const EditPage: React.FunctionComponent<IpageProps> = props => {
     return(

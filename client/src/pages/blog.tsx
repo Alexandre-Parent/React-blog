@@ -1,4 +1,4 @@
-import IpageProps from "../interfaces/pages";
+import IpageProps from "../interfaces/pageInterface";
 
 const BlogPage: React.FunctionComponent<IpageProps> = props => {
     return(
