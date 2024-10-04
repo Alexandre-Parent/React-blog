@@ -1,6 +1,6 @@
 import { AuthProvider, UserCredential, signInWithPopup } from 'firebase/auth'
 import { auth } from '../config/firebase'
-import IUser from '../interfaces/user'
+import IUser from '../interfaces/userInterface'
 import logging from '../config/logging'
 import config from '../config/config'
 import axios from 'axios'

@@ -1,4 +1,4 @@
-import Iroute from "../interfaces/routes"
+import Iroute from "../interfaces/routeInterface"
 import LoginPage from "../pages/login"
 import EditPage from "../pages/edit"
 import BlogPage from "../pages/blog"
