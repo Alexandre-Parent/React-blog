@@ -1,6 +1,6 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
-import { Card, CardBody } from 'reactstrap'
+import { Card, CardBody, CardImg } from 'reactstrap'
 
 export interface IBlogPreviewProps {
     _id: string
@@ -9,6 +9,7 @@ export interface IBlogPreviewProps {
     author: string
     createdAt: string
     updatedAt: string
+    image?: string 
     children?: React.ReactNode
 }
 
@@ -19,22 +20,24 @@ const BlogPreview: React.FunctionComponent<IBlogPreviewProps> = ({
     updatedAt, 
     headline, 
     title, 
+    image, 
     children 
 }) => {
 
-    // Formatage des dates
     const formattedCreatedAt = new Date(createdAt).toLocaleString()
     const formattedUpdatedAt = new Date(updatedAt).toLocaleString()
 
-    // Texte pour l'auteur et les dates
     const timeInfo = createdAt !== updatedAt 
         ? `Updated by ${author} on ${formattedUpdatedAt}` 
         : `Posted by ${author} on ${formattedCreatedAt}`
 
+    const defaultImage = 'https://via.placeholder.com/1200x450?text=No+Image+Available'
+
     return (
         <Card className="blog-preview border-0 mb-4">
+            <CardImg top width="100%" src={image || defaultImage} alt={title || 'Blog image'} />
+            
             <CardBody className="p-0">
-                {/* Lien vers le blog avec styles CSS */}
                 <Link 
                     to={`/blogs/${_id}`} 
                     style={{ textDecoration: 'none' }}
@@ -46,7 +49,6 @@ const BlogPreview: React.FunctionComponent<IBlogPreviewProps> = ({
                 <p className="blog-preview__meta text-secondary">
                     {timeInfo}
                 </p>
-                {/* Affichage des enfants si présents */}
                 {children && (
                     <div className="blog-preview__content mt-3">
                         {children}

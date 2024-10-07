@@ -22,29 +22,29 @@ const authRoutes: Iroute[] = [
     }
 ]
 
+
 const blogRoutes: Iroute[] = [
+    {
+        path: "/blogs/:blogID",
+        exact: true,
+        auth: false,
+        component: BlogPage,
+        name: 'Blog'
+    },
+    {
+        path: "/edit/:blogID",
+        exact: true,
+        auth: true,
+        component: EditPage,
+        name: 'Edit'
+    },
     {
         path: "/edit",
         exact: true,
         auth: true,
         component: EditPage,
-        name: 'Edit'
-    },
-    {
-        path: "/edit/:blogID",
-        exact: true,
-        auth: true,
-        component: EditPage,
-        name: 'Edit'
-    },
-    {
-        path: "/edit/:blogID",
-        exact: true,
-        auth: false,
-        component: BlogPage,
-        name: 'Blog'
+        name: 'New Blog'
     }
-
 ]
 
 const mainRoutes: Iroute[] = [
@@ -57,7 +57,7 @@ const mainRoutes: Iroute[] = [
     }
 ]
 
-const routes : Iroute[] = [
+const routes: Iroute[] = [
     ...authRoutes,
     ...blogRoutes,
     ...mainRoutes
