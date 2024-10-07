@@ -92,9 +92,7 @@ export const Validate = async (fire_token: string, callback: AuthCallback) => {
     }
 }
 
-/**
- * Interface pour la réponse d'authentification et de validation.
- */
+
 interface AuthResponse {
     user: IUser
 }

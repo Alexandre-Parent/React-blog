@@ -1,11 +1,12 @@
-import { Col, Container, Row } from 'reactstrap';
+import { Col, Container, Row } from 'reactstrap'
+import React from 'react' // Ajoute l'import pour React
 
 export interface IHeaderProps {
-    height?: string;
-    image?: string;
-    title: string;
-    headline: string;
-    children?: string;
+    height?: string
+    image?: string
+    title: string
+    headline: string
+    children?: React.ReactNode // Permet d'accepter des éléments JSX, des chaînes de caractères, etc.
 }
 
 const Header: React.FunctionComponent<IHeaderProps> = ({
@@ -21,8 +22,7 @@ const Header: React.FunctionComponent<IHeaderProps> = ({
         width: '100%',
         height: height,
         padding:"50px"
-    };
-    
+    }
 
     return (
         <header style={headerStyle}>
@@ -31,12 +31,12 @@ const Header: React.FunctionComponent<IHeaderProps> = ({
                     <Col>
                         <h1 className='display-4 text-white mt-5 mb-2'>{title}</h1>
                         <h3 className='mb-5 text-white'>{headline}</h3>
-                        {children}
+                        {children} {/* Permet d'afficher les enfants qui peuvent être des éléments JSX */}
                     </Col>
                 </Row>
             </Container>
         </header>
-    );
+    )
 }
 
-export default Header;
+export default Header
